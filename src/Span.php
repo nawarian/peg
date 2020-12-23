@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Nawarian\PEG;
 
-final class Span
+use Stringable;
+
+final class Span implements Stringable
 {
     /**
      * @var string
@@ -101,6 +103,17 @@ final class Span
             $this->pos = $oldPos;
         }
 
+        return $str;
+    }
+
+    public function __toString(): string
+    {
+        $oldPos = $this->pos;
+        $this->pos = 0;
+
+        $str = $this->readUntilEOF();
+
+        $this->pos = $oldPos;
         return $str;
     }
 }

@@ -5,9 +5,10 @@ declare(strict_types=1);
 use Nawarian\PEG\Rule\RuleFactory;
 use Nawarian\PEG\Rule\ZeroOrMany;
 use Nawarian\PEG\Span;
+use Nawarian\PEG\Token;
 
 it('Should match always', function (ZeroOrMany $zeroOrMany, string $text, string $expected) {
-    expect($zeroOrMany->match($text))->toEqual(new Span($expected));
+    expect($zeroOrMany->match($text))->toEqual(new Token('ZeroOrMany', new Span($expected)));
 })->with([
     [
         RuleFactory::zeroOrMany(

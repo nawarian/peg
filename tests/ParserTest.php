@@ -40,19 +40,14 @@ it('Should fetch matched strings by named rules', function () {
     GRAMMAR;
 
     $parser = Parser::fromGrammar($simpleSumGrammar);
+    $rootToken = $parser->parse('10+20', 'Sum');
 
-    $tokens = $parser->parse('10+20', 'Sum');
-    expect($tokens)->toEqual(new Token('Sum', new Span('10+20')));
-
-    // @todo -> replace previous assertions with the ones below. It already matches everything but doesn't tokenize.
-//    expect($tokens)->toEqual(
-//        new Token('Sum', [
-//            new Token('Digit', '10'),
-//            new Token('Literal', '+'),
-//            new token('Digit', '20'),
-//            new Token('EndOfFile', [
-//                new Token('Not', new Token('Any', '')),
-//            ])
-//        ])
-//    );
+    expect($rootToken)->toEqual(
+        new Token('Sum', [
+            new Token('Digit', new Span('10')),
+            new Token('Literal', new Span('+')),
+            new token('Digit', new Span('20')),
+            new Token('EndOfFile', new Span(''))
+        ])
+    );
 });

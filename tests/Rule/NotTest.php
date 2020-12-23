@@ -5,9 +5,10 @@ declare(strict_types=1);
 use Nawarian\PEG\Rule\Not;
 use Nawarian\PEG\Rule\RuleFactory;
 use Nawarian\PEG\Span;
+use Nawarian\PEG\Token;
 
 it('Should match all', function (Not $not, string $text, string $expected) {
-    expect($not->match($text))->toEqual(new Span($expected));
+    expect($not->match($text))->toEqual(new Token('Not', new Span($expected)));
 })->with([
     [RuleFactory::not(RuleFactory::literal('a')), 'b', 'b'],
     [RuleFactory::not(RuleFactory::literal('a')), '_', '_'],

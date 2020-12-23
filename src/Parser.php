@@ -4,12 +4,17 @@ declare(strict_types=1);
 
 namespace Nawarian\PEG;
 
+use Nawarian\PEG\Rule\NamedRule;
 use Nawarian\PEG\Rule\Rule;
 use Nawarian\PEG\Rule\RuleFactory;
+use Nawarian\PEG\Rule\Sequence;
+use Nawarian\PEG\Rule\TokenValueResolver;
 use UnexpectedValueException;
 
 final class Parser
 {
+    use TokenValueResolver;
+
     /**
      * @var array<string, Rule>
      */
@@ -23,13 +28,13 @@ final class Parser
         return $instance;
     }
 
-    public function parse(string $text, string $rootRule): Token
+    public function parse(string $text, string $rootRuleName): Token
     {
-        $rule = $this->rules[$rootRule];
+        /** @var Sequence $rootRule */
+        $rootRule = $this->rules[$rootRuleName];
+        $result = $rootRule->match($text);
 
-        $result = $rule->match($text);
-
-        return new Token($rootRule, $result);
+        return new Token($rootRuleName, $result->value);
     }
 
     private function createRulesFromGrammar(string $grammar): array
@@ -52,7 +57,8 @@ final class Parser
             }
 
             if ($ruleName = $ruleNameMatcher->match($grammar->readUntilEOF(true))) {
-                $grammar->read($ruleName->len);
+                $ruleNameSpan = new Span($ruleName->value[0]->value . $ruleName->value[1]->value);
+                $grammar->read($ruleNameSpan->len);
 
                 $this->skipBlankSpaces($grammar);
 
@@ -61,7 +67,7 @@ final class Parser
                     throw new UnexpectedValueException(
                         sprintf(
                             "Expected a '<-' after rule name '%s', '%s' found.",
-                            $ruleName->stream,
+                            $ruleNameSpan->stream,
                             $attributionSymbol,
                         )
                     );
@@ -71,7 +77,7 @@ final class Parser
 
                 $rule = $this->parseRule($grammar->current() . $grammar->readLine());
 
-                $rules[$ruleName->stream] = $rule;
+                $rules[$ruleNameSpan->stream] = $rule;
             }
 
             if ($grammar->peek() === null) {
@@ -158,9 +164,10 @@ final class Parser
 
             if (ctype_alpha($span->current()) || $span->current() === '_') {
                 $ruleName = $ruleNameMatcher->match($span->readUntilEOF(true));
-                $span->read($ruleName->len);
+                $ruleNameSpan = new Span($ruleName->value[0]->value . $ruleName->value[1]->value);
+                $span->read($ruleNameSpan->len);
 
-                $rule = RuleFactory::named($ruleName->stream, $this);
+                $rule = RuleFactory::named($ruleNameSpan->stream, $this);
                 $rule = $not ? RuleFactory::not($rule) : $rule;
 
                 if ($span->current() === '+') {

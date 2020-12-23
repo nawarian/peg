@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Nawarian\PEG\Rule;
 
 use Nawarian\PEG\Parser;
+use Nawarian\PEG\Token;
 
 final class NamedRule implements Rule
 {
@@ -26,6 +27,6 @@ final class NamedRule implements Rule
 
     public function match(string $text)
     {
-        return $this->parser->rules[$this->namedRule]->match($text);
+        return new Token($this->namedRule, $this->parser->rules[$this->namedRule]->match($text));
     }
 }

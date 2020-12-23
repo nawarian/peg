@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Nawarian\PEG\Rule;
 
-use Nawarian\PEG\Span;
+use Nawarian\PEG\Token;
 
 interface Rule
 {
@@ -12,7 +12,7 @@ interface Rule
      * Returns a matched span or false in case of non-match
      *
      * @param string $text
-     * @return Span|false
+     * @return Token|false
      */
     public function match(string $text);
 }

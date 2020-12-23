@@ -5,9 +5,12 @@ declare(strict_types=1);
 namespace Nawarian\PEG\Rule;
 
 use Nawarian\PEG\Span;
+use Nawarian\PEG\Token;
 
 final class Not implements Rule
 {
+    private const TOKEN_NAME = 'Not';
+
     /**
      * @var Rule
      */
@@ -21,7 +24,7 @@ final class Not implements Rule
     public function match(string $text)
     {
         if ($this->rule->match($text) === false) {
-            return new Span($text);
+            return new Token(self::TOKEN_NAME, new Span($text));
         }
 
         return false;
