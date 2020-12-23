@@ -20,8 +20,8 @@ final class Pattern implements Rule
 
     public function match(string $text)
     {
-        if (preg_match("#{$this->pattern}#", $text) === 1) {
-            return new Span($text);
+        if (preg_match("#^{$this->pattern}#", $text, $matches) === 1) {
+            return new Span($matches[0]);
         }
 
         return false;

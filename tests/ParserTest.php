@@ -6,6 +6,7 @@ use Nawarian\PEG\Parser;
 use Nawarian\PEG\Rule\RuleFactory;
 
 $widestGrammarSpec = <<<GRAMMAR
+    # The PEG rule matches ANYTHING until EOF is found.
     PEG         <- .* EndOfFile
     EndOfFile   <-  !.
 GRAMMAR;
@@ -19,12 +20,14 @@ it('Generates a grammar composed of rules', function (string $widestGrammarSpec)
 
     expect($parser->rules)->toHaveCount(2);
 
-    $endOfFile = RuleFactory::pattern('!.');
+    $endOfFile = RuleFactory::not(RuleFactory::any());
 
     expect($parser->rules['PEG'])->toEqual(
         RuleFactory::sequence(
-            RuleFactory::pattern('.*'),
-            $endOfFile,
+            RuleFactory::zeroOrMany(
+                RuleFactory::any()
+            ),
+            RuleFactory::named('EndOfFile'),
         ),
     );
     expect($parser->rules['EndOfFile'])->toEqual($endOfFile);
