@@ -28,6 +28,11 @@ final class RuleFactory
         return new Not($rule);
     }
 
+    public static function oneOrMany(Rule $rule): OneOrMany
+    {
+        return new OneOrMany($rule);
+    }
+
     public static function pattern(string $pattern): Pattern
     {
         return new Pattern($pattern);
