@@ -20,6 +20,12 @@ final class ZeroOrMany implements Rule
 
     public function match(string $text)
     {
-        throw new \Exception('Not implemented.');
+        $span = new Span($text);
+
+        while ($matched = $this->rule->match($span->stream)) {
+            $span = $span->subtract($matched);
+        }
+
+        return (new Span($text))->subtract($span);
     }
 }
