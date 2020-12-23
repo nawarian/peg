@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nawarian\PEG\Rule;
 
+use Nawarian\PEG\Span;
+
 final class Not implements Rule
 {
     /**
@@ -18,6 +20,10 @@ final class Not implements Rule
 
     public function match(string $text)
     {
-        throw new \Exception('Not implemented.');
+        if ($this->rule->match($text) === false) {
+            return new Span($text);
+        }
+
+        return false;
     }
 }

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nawarian\PEG\Rule;
 
+use Nawarian\PEG\Parser;
+
 final class RuleFactory
 {
     public static function any(): Any
@@ -16,9 +18,9 @@ final class RuleFactory
         return new Literal($literal);
     }
 
-    public static function named(string $namedRule): NamedRule
+    public static function named(string $namedRule, Parser $parser): NamedRule
     {
-        return new NamedRule($namedRule);
+        return new NamedRule($namedRule, $parser);
     }
 
     public static function not(Rule $rule): Not

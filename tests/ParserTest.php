@@ -27,7 +27,7 @@ it('Generates a grammar composed of rules', function (string $widestGrammarSpec)
             RuleFactory::zeroOrMany(
                 RuleFactory::any()
             ),
-            RuleFactory::named('EndOfFile'),
+            RuleFactory::named('EndOfFile', $parser),
         ),
     );
     expect($parser->rules['EndOfFile'])->toEqual($endOfFile);

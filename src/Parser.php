@@ -122,7 +122,7 @@ final class Parser
                 $ruleName = $ruleNameMatcher->match($span->readUntilEOF(true));
                 $span = $span->subtract($ruleName);
 
-                $rule = RuleFactory::named($ruleName->stream);
+                $rule = RuleFactory::named($ruleName->stream, $this);
                 $rules[] = $not ? RuleFactory::not($rule) : $rule;
             }
 
