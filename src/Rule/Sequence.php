@@ -18,4 +18,9 @@ final class Sequence implements Rule
     {
         $this->rules = $rules;
     }
+
+    public function match(string $text): bool
+    {
+        throw new \LogicException('Not implemented.');
+    }
 }

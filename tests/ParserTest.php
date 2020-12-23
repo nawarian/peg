@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Nawarian\PEG\Parser;
 use Nawarian\PEG\Rule\RuleFactory;
 

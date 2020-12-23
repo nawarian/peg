@@ -15,4 +15,9 @@ final class Pattern implements Rule
     {
         $this->pattern = $pattern;
     }
+
+    public function match(string $text): bool
+    {
+        return preg_match("#{$this->pattern}#", $text) === 1;
+    }
 }
