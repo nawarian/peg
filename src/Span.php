@@ -27,16 +27,15 @@ final class Span
 
     public function subtract(Span $span): self
     {
-        if (str_contains($this->stream, $span->stream) === false) {
+        if (str_contains($this->stream, $span->stream) === false || $span->stream === '') {
             return $this;
         }
 
-        /**
-         * @todo -> make it multibyte safe
-         */
-        $newStream = str_replace($span->stream, '', $this->stream);
+        $before = mb_strstr($this->stream, $span->stream, true);
+        $pos = mb_strpos($this->stream, $span->stream);
+        $after = mb_substr($this->stream, $pos + $span->len);
 
-        return new self($newStream);
+        return new self($before . $after);
     }
 
     public function reset(): void
@@ -75,13 +74,15 @@ final class Span
     {
         $line = '';
 
-        while ($chr = $this->peek()) {
+        $chr = $this->peek();
+        while ($chr !== null) {
             if ($chr === PHP_EOL) {
                 $this->next();
                 break;
             }
 
             $line .= $this->next();
+            $chr = $this->peek();
         }
 
         return $line;

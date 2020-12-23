@@ -23,6 +23,15 @@ final class Parser
         return $instance;
     }
 
+    public function parse(string $text, string $rootRule): Token
+    {
+        $rule = $this->rules[$rootRule];
+
+        $result = $rule->match($text);
+
+        return new Token($rootRule, $result);
+    }
+
     private function createRulesFromGrammar(string $grammar): array
     {
         $grammar = new Span($grammar);
@@ -118,12 +127,51 @@ final class Parser
                 }
             }
 
+            if ($span->current() === '[') {
+                $span->next();
+                $pattern = '';
+
+                while ($span->current() !== ']') {
+                    $pattern .= $span->current();
+                    $span->next();
+                }
+
+                $rule = RuleFactory::pattern("[{$pattern}]");
+                $rules[] = $not ? RuleFactory::not($rule) : $rule;
+                $span->next();
+            }
+
+            if ($span->current() === '"' || $span->current() === "'") {
+                $delimiter = $span->current();
+                $span->next();
+                $literal = '';
+
+                while ($span->current() !== $delimiter) {
+                    $literal .= $span->current();
+                    $span->next();
+                }
+                $span->next();
+
+                $rule = RuleFactory::literal($literal);
+                $rules[] = $not ? RuleFactory::not($rule) : $rule;
+            }
+
             if (ctype_alpha($span->current()) || $span->current() === '_') {
                 $ruleName = $ruleNameMatcher->match($span->readUntilEOF(true));
-                $span = $span->subtract($ruleName);
+                $span->read($ruleName->len);
 
                 $rule = RuleFactory::named($ruleName->stream, $this);
-                $rules[] = $not ? RuleFactory::not($rule) : $rule;
+                $rule = $not ? RuleFactory::not($rule) : $rule;
+
+                if ($span->current() === '+') {
+                    $rule = RuleFactory::oneOrMany($rule);
+                    $span->next();
+                } elseif ($span->current() === '*') {
+                    $rule = RuleFactory::zeroOrMany($rule);
+                    $span->next();
+                }
+
+                $rules[] = $rule;
             }
 
             $span->next();
