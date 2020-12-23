@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 use Nawarian\PEG\Rule\Pattern;
 use Nawarian\PEG\Rule\RuleFactory;
+use Nawarian\PEG\Span;
 
 it('Should match all', function (Pattern $pattern, string $text) {
-    expect($pattern->match($text))->toBeTrue();
+    expect($pattern->match($text))->toEqual(new Span($text));
 })->with([
     [RuleFactory::pattern('Name:? Nic[hk]?olas'), 'Name Nicolas'],
 ]);

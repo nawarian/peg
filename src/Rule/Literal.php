@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nawarian\PEG\Rule;
 
+use Nawarian\PEG\Span;
+
 final class Literal implements Rule
 {
     /**
@@ -16,8 +18,12 @@ final class Literal implements Rule
         $this->literal = $literal;
     }
 
-    public function match(string $text): bool
+    public function match(string $text)
     {
-        return $text === $this->literal;
+        if (str_starts_with($text, $this->literal)) {
+            return new Span($this->literal);
+        }
+
+        return false;
     }
 }
